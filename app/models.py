@@ -40,8 +40,12 @@ class Market(BaseModel):
             return self
         try:
             token_ids: list[str] = json.loads(self.clobTokenIds)
-            outcome_names: list[str] = json.loads(self.outcomes) if self.outcomes else []
-            outcome_prices: list[str] = json.loads(self.outcomePrices) if self.outcomePrices else []
+            outcome_names: list[str] = (
+                json.loads(self.outcomes) if self.outcomes else []
+            )
+            outcome_prices: list[str] = (
+                json.loads(self.outcomePrices) if self.outcomePrices else []
+            )
             self.tokens = [
                 Token(
                     token_id=tid,
@@ -75,8 +79,13 @@ class BookSnapshot(BaseModel):
     question: str | None = None
     outcome: str | None = None
 
+    gamma_price: float | None = None  # Gamma API reference price (outcomePrices)
     best_bid: float | None = None
     best_ask: float | None = None
+    bid_size: float | None = None  # Contract size at best bid
+    ask_size: float | None = None  # Contract size at best ask
+    bid_depth: float | None = None  # Dollar value at best bid (price * size)
+    ask_depth: float | None = None  # Dollar value at best ask (price * size)
     mid_price: float | None = None
     spread: float | None = None
 
@@ -97,6 +106,10 @@ class SignalResult(BaseModel):
     mid_price: float | None = None
     spread: float | None = None
     price_change_5m: float | None = None
+    gamma_divergence: float | None = None  # |mid - gamma_price|
+    arb_gap: float | None = None  # 1 - complement_ask_sum (>0 = buy arb)
+    bid_depth: float | None = None
+    ask_depth: float | None = None
     liquidity: float | None = None
     volume: float | None = None
 
