@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 from datetime import datetime
 
 
@@ -25,8 +26,33 @@ class Market(BaseModel):
     slug: str | None = None
     tags: list[Any] | None = None
     tokens: list[Token] | None = None
+    clobTokenIds: str | None = None
+    outcomes: str | None = None
+    outcomePrices: str | None = None
 
     model_config = ConfigDict(extra="allow")
+
+    @model_validator(mode="after")
+    def build_tokens_from_clob_fields(self) -> "Market":
+        if self.tokens:
+            return self
+        if not self.clobTokenIds:
+            return self
+        try:
+            token_ids: list[str] = json.loads(self.clobTokenIds)
+            outcome_names: list[str] = json.loads(self.outcomes) if self.outcomes else []
+            outcome_prices: list[str] = json.loads(self.outcomePrices) if self.outcomePrices else []
+            self.tokens = [
+                Token(
+                    token_id=tid,
+                    outcome=outcome_names[i] if i < len(outcome_names) else None,
+                    price=float(outcome_prices[i]) if i < len(outcome_prices) else None,
+                )
+                for i, tid in enumerate(token_ids)
+            ]
+        except Exception:
+            pass
+        return self
 
 
 class OrderBookLevel(BaseModel):
