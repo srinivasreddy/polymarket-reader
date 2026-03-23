@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
+from datetime import datetime
 
 
 class Token(BaseModel):
@@ -38,5 +39,42 @@ class OrderBook(BaseModel):
     asset_id: str | None = None
     bids: list[OrderBookLevel] = []
     asks: list[OrderBookLevel] = []
+
+    model_config = ConfigDict(extra="allow")
+
+
+class BookSnapshot(BaseModel):
+    token_id: str
+    market_id: str | None = None
+    question: str | None = None
+    outcome: str | None = None
+
+    best_bid: float | None = None
+    best_ask: float | None = None
+    mid_price: float | None = None
+    spread: float | None = None
+
+    liquidity: float | None = None
+    volume: float | None = None
+
+    ts: datetime
+
+    model_config = ConfigDict(extra="allow")
+
+
+class SignalResult(BaseModel):
+    token_id: str
+    market_id: str | None = None
+    question: str | None = None
+    outcome: str | None = None
+
+    mid_price: float | None = None
+    spread: float | None = None
+    price_change_5m: float | None = None
+    liquidity: float | None = None
+    volume: float | None = None
+
+    score: float
+    flags: list[str]
 
     model_config = ConfigDict(extra="allow")
