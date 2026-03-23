@@ -14,7 +14,9 @@ async def main() -> None:
         print("\n[bold cyan]Latest active markets[/bold cyan]\n")
         for idx, market in enumerate(markets, start=1):
             print(f"{idx}. {market.question}")
-            print(f"   id={market.id} liquidity={market.liquidity} volume={market.volume}")
+            print(
+                f"   id={market.id} liquidity={market.liquidity} volume={market.volume}"
+            )
 
             if market.tokens:
                 for token in market.tokens:
