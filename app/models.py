@@ -40,9 +40,7 @@ class Market(BaseModel):
             return self
         try:
             token_ids: list[str] = json.loads(self.clobTokenIds)
-            outcome_names: list[str] = (
-                json.loads(self.outcomes) if self.outcomes else []
-            )
+            outcome_names: list[str] = json.loads(self.outcomes) if self.outcomes else []
             outcome_prices: list[str] = (
                 json.loads(self.outcomePrices) if self.outcomePrices else []
             )
